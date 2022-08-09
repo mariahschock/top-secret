@@ -2,6 +2,8 @@ const pool = require('../lib/utils/pool');
 const setup = require('../data/setup');
 const request = require('supertest');
 const app = require('../lib/app');
+const User = require('../lib/models/User');
+const UserService = require('../lib/services/UserService');
 
 const testUser = {
   firstName: 'Test',
@@ -10,7 +12,16 @@ const testUser = {
   password: 'qwerty',
 };
 
+const registerAndLogin = async (userProps = {}) => {
+  const password = userProps.password ?? testUser.password;
 
+  const agent = request.agent(app);
+  const user = await UserService.create({ ...testUser, ...userProps });
+
+  const { email } = user;
+  await agent.post('/api/v1/users/sessions').send({ email, password });
+  return [agent, user];
+};
 
 describe('backend-express-template routes', () => {
   beforeEach(() => {
@@ -35,6 +46,13 @@ describe('backend-express-template routes', () => {
     expect(res.status).toBe(200);
   });
 
+  it('DELETE - should log out a user', async () => {
+    const deleteRes = await request(app).delete('/api/v1/users/sessions');
+    expect(deleteRes.status).toBe(200);
+    const res = await request(app).get('/api/v1/users/sessions');
+    expect(res.status).toBe(404);
+  });
+  
   afterAll(() => {
     pool.end();
   });
