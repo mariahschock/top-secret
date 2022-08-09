@@ -47,10 +47,13 @@ describe('backend-express-template routes', () => {
   });
 
   it('DELETE - should log out a user', async () => {
-    const deleteRes = await request(app).delete('/api/v1/users/sessions');
-    expect(deleteRes.status).toBe(200);
-    const res = await request(app).get('/api/v1/users/sessions');
-    expect(res.status).toBe(404);
+    const [agent] = await registerAndLogin();
+    const res = await agent.delete('/api/v1/users/sessions');
+    expect(res.status).toBe(204);
+  });
+
+  it('GET - should return list of secrets', async () => {
+    
   });
   
   afterAll(() => {
