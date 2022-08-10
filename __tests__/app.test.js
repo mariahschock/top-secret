@@ -2,7 +2,7 @@ const pool = require('../lib/utils/pool');
 const setup = require('../data/setup');
 const request = require('supertest');
 const app = require('../lib/app');
-const User = require('../lib/models/User');
+// const User = require('../lib/models/User');
 const UserService = require('../lib/services/UserService');
 
 const testUser = {
@@ -46,14 +46,25 @@ describe('backend-express-template routes', () => {
     expect(res.status).toBe(200);
   });
 
+  it('POST - creates a new secret', async () => {
+    const [agent] = await registerAndLogin();
+    const res = await agent.post('/api/v1/secrets').send({
+      title: 'Ooooo new secret',
+      description: 'Shhhhhh'
+    });
+    expect(res.status).toBe(200);
+  });
+
+  it('GET - should return list of secrets if user is signed in', async () => {
+    const [agent] = await registerAndLogin();
+    const res = await agent.get('/api/v1/secrets');
+    expect(res.status).toBe(200);
+  });
+
   it('DELETE - should log out a user', async () => {
     const [agent] = await registerAndLogin();
     const res = await agent.delete('/api/v1/users/sessions');
     expect(res.status).toBe(204);
-  });
-
-  it('GET - should return list of secrets', async () => {
-    
   });
   
   afterAll(() => {

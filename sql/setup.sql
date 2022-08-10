@@ -15,5 +15,12 @@ CREATE TABLE secrets (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     title TEXT NOT NULL,
     description TEXT NOT NULL,
-    create_at TIMESTAMP
+    created_at TIMESTAMP
 );
+
+INSERT INTO secrets(
+    title, 
+    description
+)
+VALUES
+  ('Testing', 'Will this work?');
